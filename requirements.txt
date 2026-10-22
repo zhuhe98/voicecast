@@ -1,0 +1,17 @@
+# 测试环境：Python 3.12、CUDA 12.8。torch 请按自己的 CUDA 版本安装（https://pytorch.org）。
+torch>=2.4
+qwen-tts==0.1.1          # 锁定生成用到其内部接口，换版本前请先测试
+transformers==4.57.3
+accelerate>=1.0
+huggingface_hub>=0.30
+funasr==1.4.16
+modelscope>=1.20
+numpy>=1.26
+pandas>=2.0
+pyyaml>=6.0
+soundfile>=0.12
+librosa>=0.10
+praat-parselmouth>=0.4.3
+zhconv>=1.4
+jiwer>=3.0
+gradio>=5.0

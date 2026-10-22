@@ -1,0 +1,63 @@
+# 示例阵容：都市短剧（声音卡 v3，由 Agent 按 skills/voicecast/SKILL.md 填写）
+characters:
+- id: lu
+  name: 陆景深
+  type: domineering_ceo
+  description: 三十岁，集团总裁，冷酷强势
+  intro: 我是陆景深。在这座城市，还没有我拿不到的东西。
+  card:
+    version: 3
+    attitude: cold, arrogant and commanding
+    ref_line: 我说过的话，从来不说第二遍。
+    rationale: 人设与霸道总裁一致，只写语气（v1 更好）
+- id: su
+  name: 苏念
+  type: gentle_heroine
+  description: 二十二岁，倔强善良的女主
+  intro: 我叫苏念。日子再难，我也会靠自己一步一步走下去。
+  card:
+    version: 3
+    attitude: gentle yet quietly stubborn
+    ref_line: 我不需要你的同情，我自己能行。
+    rationale: 人设与温婉女主一致，只写语气
+- id: lin
+  name: 林薇薇
+  type: shrewd_lady
+  description: 二十五岁，心机女配，表面甜美
+  intro: 姐姐，你可别误会，我只是好心提醒你，景深哥哥他最讨厌别人纠缠了。
+  card:
+    version: 3
+    pitch: hi
+    attitude: fake-sweet, sly and coquettish
+    ref_line: 哎呀，姐姐，人家真的只是关心你嘛。
+    rationale: 表面甜美的心机女配：音高高档、嗲（v2 此角色更好）
+- id: gu
+  name: 顾言
+  type: gentle_young_master
+  description: 二十六岁，温柔的医生，男二
+  intro: 我是顾言，是个医生。不管发生什么，我都会在你身后。
+  card:
+    version: 3
+    attitude: tender, patient and reassuring
+    ref_line: 别怕，有我在。先把药吃了，好吗？
+    rationale: 人设与温润公子一致，只写语气
+- id: grandma
+  name: 陆老夫人
+  type: elder_woman
+  description: 七十五岁，豪门老夫人，威严
+  intro: 陆家的门，可不是那么好进的。你先坐下，陪我老太婆说说话。
+  card:
+    version: 3
+    attitude: dignified, stern but kindly
+    ref_line: 孩子，过来坐。陪我老太婆说说话。
+    rationale: 人设与老年女性一致，只写语气与台词
+- id: xiao
+  name: 苏小宇
+  type: little_brother
+  description: 十七岁，女主的弟弟，阳光黏人
+  intro: 姐！我这次月考进了前十，你答应请我吃火锅的，可不许耍赖！
+  card:
+    version: 3
+    attitude: playful, clingy and cheeky
+    ref_line: 姐，这次月考我进了前十，你说好要请我吃火锅的。
+    rationale: 人设与阳光弟弟一致，只写语气

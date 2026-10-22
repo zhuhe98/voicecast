@@ -1,0 +1,328 @@
+# 类型库：类型 → 身份基础、类型内音高两档、默认演绎、给宿主 Agent 的说明
+# 描述沿用参数卡写法：英文声学描述，演绎为该类型的平静默认值（情绪逐句另加）
+# prototype: 是否已有人工确认的 TTS 侧类型原型（无则类型检查只看 F0 与人工试听）
+version: 1
+
+types:
+  # ── 二次元包 ──────────────────────────────────────────
+  loli:
+    pack: anime
+    gender: F
+    zh: 萝莉
+    hint: 外表或年龄明显是小女孩（约 12 岁以下），撒娇、天真
+    noun: little girl
+    age: [7, 12]
+    pitch_range: [4, 6]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: false
+    f0_band: [250, 420]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Little girl voice
+    pitch: {lo: high, hi: very high}
+    delivery: medium pace, lively intonation, sweet tone
+  genki_girl:
+    pack: anime
+    gender: F
+    zh: 元气少女
+    hint: 十几岁少女，开朗活泼、精力充沛
+    noun: girl
+    age: [13, 18]
+    pitch_range: [4, 6]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: false
+    f0_band: [230, 400]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Teenage girl around seventeen
+    pitch: {lo: medium-high, hi: high}
+    delivery: fast pace, wide pitch variation with rising sentence endings, cheerful tone
+  gentle_girl:
+    pack: anime
+    gender: F
+    zh: 温柔少女 / 大小姐
+    hint: 少女或年轻女子，温和、文静、有教养
+    noun: young woman
+    age: [15, 22]
+    pitch_range: [3, 5]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: false
+    f0_band: [190, 330]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Young female voice
+    pitch: {lo: medium, hi: medium-high}
+    delivery: unhurried pace, mild pitch variation, soft kind tone
+  cool_lady:
+    pack: anime
+    gender: F
+    zh: 冷淡御姐
+    hint: 成熟女性，冷静、疏离、强势
+    noun: woman
+    age: [22, 35]
+    pitch_range: [1, 3]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: false
+    f0_band: [150, 260]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Mature female voice
+    pitch: {lo: low, hi: medium-low}
+    delivery: slow pace, flat intonation with falling sentence endings, cool detached tone
+  shounen:
+    pack: anime
+    gender: M
+    zh: 少年
+    hint: 十几岁男孩，热血、直率
+    noun: teenage boy
+    age: [12, 17]
+    pitch_range: [3, 5]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: false
+    f0_band: [120, 260]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Teenage boy voice around 15
+    pitch: {lo: medium, hi: medium-high}
+    delivery: fairly fast pace, energetic intonation, determined tone
+  sunny_youth:
+    pack: anime
+    gender: M
+    zh: 阳光青年
+    hint: 二十岁左右男性，开朗友善
+    noun: young man
+    age: [18, 26]
+    pitch_range: [2, 4]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: false
+    f0_band: [95, 190]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Young man in his early twenties
+    pitch: {lo: medium-low, hi: medium}
+    delivery: medium pace, lively intonation, friendly warm tone
+  cool_youth:
+    pack: anime
+    gender: M
+    zh: 冷峻青年
+    hint: 青年男性，冷静、寡言、可靠或高傲
+    noun: young man
+    age: [18, 30]
+    pitch_range: [1, 3]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: false
+    f0_band: [85, 170]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Young man in his twenties
+    pitch: {lo: low, hi: medium-low}
+    delivery: slow pace, restrained flat intonation, calm cool tone
+  deep_uncle:
+    pack: anime
+    gender: M
+    zh: 低沉大叔
+    hint: 四十岁以上男性，沉稳、阅历深
+    noun: man
+    age: [40, 55]
+    pitch_range: [0, 2]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: true
+    f0_band: [70, 150]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Middle-aged man in his forties
+    pitch: {lo: low, hi: medium-low}
+    delivery: slow pace, steady intonation, calm composed tone
+
+  # ── 短剧真人包 ────────────────────────────────────────
+  sweet_girl:
+    pack: drama
+    gender: F
+    zh: 甜妹
+    hint: 少女或年轻女子，可爱、爽朗或俏皮
+    noun: young woman
+    age: [16, 22]
+    pitch_range: [4, 6]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: false
+    f0_band: [210, 380]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Young woman around eighteen
+    pitch: {lo: medium-high, hi: high}
+    delivery: medium-fast pace, bright lively intonation, sweet cheerful tone
+  gentle_heroine:
+    pack: drama
+    gender: F
+    zh: 温婉女主
+    hint: 年轻女主角，温柔、内敛、柔弱或知性
+    noun: young woman
+    age: [18, 28]
+    pitch_range: [3, 5]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: false
+    f0_band: [180, 320]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Young woman around twenty
+    pitch: {lo: medium, hi: medium-high}
+    delivery: slow gentle pace, soft restrained intonation, tender delicate tone
+  boss_lady:
+    pack: drama
+    gender: F
+    zh: 霸气女总裁
+    hint: 成熟干练的女性，强势、果断、居高临下
+    noun: woman
+    age: [28, 40]
+    pitch_range: [2, 4]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: false
+    f0_band: [150, 260]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Confident businesswoman around thirty with a clearly female voice
+    pitch: {lo: medium, hi: medium-high}
+    delivery: brisk pace, firm decisive intonation, cool commanding tone
+  shrewd_lady:
+    pack: drama
+    gender: F
+    zh: 精明泼辣
+    hint: 年轻或中年女性，精明能干、伶牙俐齿、泼辣张扬，常作配角或反派
+    noun: woman
+    age: [20, 40]
+    pitch_range: [3, 5]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: false
+    f0_band: [180, 340]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Sharp-tongued young married woman in her late twenties
+    pitch: {lo: medium, hi: medium-high}
+    delivery: fast crisp pace, quick-witted teasing intonation, bold shrewd and sassy tone
+  middle_aged_woman:
+    pack: drama
+    gender: F
+    zh: 中年女性
+    hint: 四五十岁的母亲、夫人、阿姨
+    noun: middle-aged woman
+    age: [40, 58]
+    pitch_range: [2, 4]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: false
+    f0_band: [150, 260]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Middle-aged woman in her early fifties with a mature voice
+    pitch: {lo: medium-low, hi: medium}
+    delivery: measured pace, calm intonation, composed motherly tone
+  elder_woman:
+    pack: drama
+    gender: F
+    zh: 老年女性
+    hint: 六七十岁以上的奶奶、老夫人
+    noun: elderly woman
+    age: [65, 90]
+    pitch_range: [1, 3]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    keep_tone: true       # v3：类型语气含年龄词（old-lady / old-man），Agent 的 attitude 追加而不替换
+    relax_quality: true
+    f0_band: [130, 260]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Elderly woman in her late seventies with an aged, weathered voice
+    pitch: {lo: low, hi: medium-low}
+    delivery: slow unhurried pace, slightly hoarse and quavering intonation, dignified old-lady tone
+  domineering_ceo:
+    pack: drama
+    gender: M
+    zh: 霸道总裁
+    hint: 年轻有为的男主，强势、冷酷、低沉
+    noun: man
+    age: [26, 38]
+    pitch_range: [0, 2]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: false
+    f0_band: [75, 150]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Man around thirty
+    pitch: {lo: low, hi: medium-low}
+    delivery: slow deliberate pace, low steady intonation, cold commanding tone
+  gentle_young_master:
+    pack: drama
+    gender: M
+    zh: 温润公子
+    hint: 少年或青年男性，温和儒雅、多情或书卷气
+    noun: young man
+    age: [16, 28]
+    pitch_range: [2, 4]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: false
+    f0_band: [90, 190]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Young man around eighteen
+    pitch: {lo: medium, hi: medium-high}
+    delivery: medium pace, gentle smooth intonation, warm refined tone
+  little_brother:
+    pack: drama
+    gender: M
+    zh: 阳光弟弟
+    hint: 十几岁到二十出头的男孩，阳光、黏人、活泼
+    noun: boy
+    age: [14, 20]
+    pitch_range: [3, 5]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: false
+    f0_band: [110, 230]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Teenage boy around seventeen with a clearly male voice
+    pitch: {lo: medium-low, hi: medium}
+    delivery: fast pace, lively intonation, cheerful playful tone
+  villain:
+    pack: drama
+    gender: M
+    zh: 阴狠反派
+    hint: 男性反派，阴险、傲慢、阴冷
+    noun: man
+    age: [30, 60]
+    pitch_range: [1, 3]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: true
+    f0_band: [75, 180]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Sinister man in his forties with a clearly male voice
+    pitch: {lo: medium-low, hi: medium}
+    delivery: slow pace, smooth sinister intonation, cold mocking tone
+  middle_aged_man:
+    pack: drama
+    gender: M
+    zh: 中年男性
+    hint: 四五十岁的父亲、老爷、上司
+    noun: middle-aged man
+    age: [42, 60]
+    pitch_range: [0, 2]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: true
+    f0_band: [75, 160]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Middle-aged man around fifty
+    pitch: {lo: low, hi: medium-low}
+    delivery: measured pace, steady intonation, stern composed tone
+  elder_man:
+    pack: drama
+    gender: M
+    zh: 老年男性
+    hint: 六七十岁以上的爷爷、老者
+    noun: elderly man
+    age: [65, 90]
+    pitch_range: [0, 2]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    keep_tone: true       # v3：类型语气含年龄词（old-lady / old-man），Agent 的 attitude 追加而不替换
+    relax_quality: true
+    f0_band: [70, 160]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Elderly man in his late seventies with an aged, weathered voice
+    pitch: {lo: low, hi: medium-low}
+    delivery: slow unhurried pace, hoarse and quavering intonation, old-man tone
+
+  # ── 通用 ──────────────────────────────────────────────
+  narrator_female:
+    pack: common
+    gender: F
+    zh: 旁白（女）
+    hint: 叙述者
+    noun: female narrator
+    age: [25, 50]
+    pitch_range: [2, 4]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: false
+    f0_band: [150, 260]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Female narrator voice in her thirties
+    pitch: {lo: medium-low, hi: medium}
+    delivery: steady storytelling pace, clear articulate intonation, calm engaging tone
+  narrator_male:
+    pack: common
+    gender: M
+    zh: 旁白（男）
+    hint: 叙述者
+    noun: male narrator
+    age: [30, 60]
+    pitch_range: [0, 2]       # 声音卡 v2 七档音高的下标范围（pitch_scale）
+    relax_quality: false
+    f0_band: [70, 160]       # 试音 F0 中位数的合理范围（Hz），超出即不合格
+    identity_base: Mature male narrator voice in his fifties
+    pitch: {lo: low, hi: medium-low}
+    delivery: steady storytelling pace, clear articulate intonation, calm engaging tone
+
+# ── 声音卡 v2（Agent 填写，voicecast/cards.py 校验与渲染）──────────────
+pitch_scale: [very low, low, medium-low, medium, medium-high, high, very high]
+vocab:
+  quality: [smooth, clear, crisp, bright, mellow, warm, soft, sweet, thin, light, full, rich, deep, resonant, round,
+            husky, slightly husky, raspy, gravelly, hoarse, breathy, airy, nasal, sharp, piercing, magnetic, velvety,
+            aged, weathered, frail, shaky, youthful, childlike]
+  resonance: [head-voice, chest]
+  pace: [very slow, slow, medium, fast, very fast]
+  energy: [low, moderate, high, very high]
+  intonation: [flat, steady, lively, wide-ranging, sing-song]
+attitude_max_words: 6
+attitude_banned: [like, as if, sounds like, character, role, imitate, impersonate]
+
+# 固有属性（声音卡 v1：每维 2 档；单个维度对"是谁"的控制弱，主要提供方向与可解释性）
+attributes:
+  roughness:   {lo: smooth, hi: slightly husky}
+  breathiness: {lo: firm, hi: breathy airy}
+  resonance:   {lo: bright head-voice resonance, hi: warm chest resonance}
+  weight:      {lo: thin and light, hi: full and rich}
+  nasality:    {lo: "", hi: ", with a slight nasal tint"}
+
+# 情绪描述（P0.5：M3 = 锁定声音的说话人向量 + 情绪描述，每句三选一）
+emotions:
+  neutral: ""
+  happy: very happy and excited tone, bright smiling voice, lively fast pace
+  angry: furious angry tone, loud forceful voice, sharp emphatic delivery
+  sad: deeply sad tone, soft trembling voice on the verge of tears, slow pace
+  surprised: shocked surprised tone, sudden rising pitch, gasping delivery

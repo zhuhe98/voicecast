@@ -1,0 +1,60 @@
+# 示例阵容：校园（声音卡 v3，由 Agent 按 skills/voicecast/SKILL.md 填写）
+characters:
+- id: hina
+  name: 日向夏
+  type: genki_girl
+  description: 十六岁，田径部，元气满满、大嗓门
+  intro: 我是田径部的日向夏！今天也要全力冲刺，谁都别想追上我！
+  card:
+    version: 3
+    pitch: hi
+    pace: fast
+    attitude: energetic, loud and sporty
+    ref_line: 今天的训练我又刷新了自己的纪录，明天还要继续加油。
+- id: shiori
+  name: 白石诗织
+  type: gentle_girl
+  description: 十七岁，大小姐，温柔有礼
+  intro: 初次见面，我是白石诗织。若有什么需要帮忙的地方，请尽管开口。
+  card:
+    version: 3
+    attitude: polite, graceful and gentle
+    ref_line: 初次见面，我是白石诗织，以后还请多多关照。
+- id: rei
+  name: 冰室玲
+  type: cool_lady
+  description: 十八岁，学生会长，冷静严厉
+  intro: 学生会长冰室玲。校规就是校规，没有例外。
+  card:
+    version: 3
+    pitch: hi
+    attitude: strict, calm and authoritative
+    ref_line: 学生会的规定对每个人都一样，没有例外。
+- id: momo
+  name: 小鸟游桃
+  type: loli
+  description: 十三岁，跳级的天才学妹，撒娇鬼
+  intro: 学长学长！小桃今天也带了便当哦，要一起吃吗？
+  card:
+    version: 3
+    pitch: hi
+    attitude: sweet, clingy and playful
+    ref_line: 学长，小桃今天也做了便当，要不要一起吃呢。
+- id: sora
+  name: 天野空
+  type: shounen
+  description: 十六岁，热血笨蛋男主
+  intro: 我叫天野空！虽然考试不及格，但说到打篮球，我可是天下第一！
+  card:
+    version: 3
+    attitude: passionate, carefree and earnest
+    ref_line: 虽然考试不及格，但说到打篮球，我可是天下第一。
+- id: kai
+  name: 黑崎凯
+  type: cool_youth
+  description: 十七岁，冷峻的转学生
+  intro: 黑崎凯。别靠我太近，对你没好处。
+  card:
+    version: 3
+    attitude: aloof, terse and distant
+    ref_line: 别靠我太近，对你没有好处。

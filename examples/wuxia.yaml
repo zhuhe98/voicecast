@@ -1,0 +1,71 @@
+# 示例阵容：武侠（声音卡 v3，由 Agent 按 skills/voicecast/SKILL.md 填写）
+characters:
+- id: xiao_han
+  name: 萧寒
+  type: cool_youth
+  description: 二十多岁的孤傲剑客，寡言
+  intro: 在下萧寒，一人一剑，不问江湖事。
+  card:
+    version: 3
+    attitude: aloof, terse and cold
+    ref_line: 江湖恩怨，与我无关。让开。
+    rationale: 人设与类型一致，只写语气
+- id: liu
+  name: 柳如烟
+  type: cool_lady
+  description: 二十多岁的侠女，冷艳果决
+  intro: 柳如烟。拦我者，休怪我剑下无情。
+  card:
+    version: 3
+    pitch: hi
+    quality:
+    - clear
+    - sharp
+    attitude: cold, decisive and proud
+    ref_line: 我的剑，只斩该斩之人。
+    rationale: 冷艳果决：比类型默认稍高、清亮带锋（v2 此角色更好）
+- id: xiaomei
+  name: 小师妹阿瑶
+  type: genki_girl
+  description: 十五岁，活泼的小师妹
+  intro: 师兄师兄！师父说今天不用练剑啦，我们下山去买糖葫芦吧！
+  card:
+    version: 3
+    attitude: playful and eager
+    ref_line: 师兄又偷懒不练剑了，我这就去告诉师父。
+    rationale: 人设与元气少女一致，只写语气
+- id: villain
+  name: 血手阎罗
+  type: villain
+  description: 魔教长老，阴险狠毒
+  intro: 呵呵呵……天下英雄，不过是我掌中的玩物罢了。
+  card:
+    version: 3
+    quality:
+    - raspy
+    pace: slow
+    attitude: sinister, sly and mocking
+    ref_line: 嘿嘿嘿……小子，你的命，本座收下了。
+    rationale: 阴险魔头：沙哑、拖慢（v2 此角色更好）
+- id: master
+  name: 清虚掌门
+  type: elder_man
+  description: 七十多岁的老掌门，慈祥有威严
+  intro: 老夫执掌清虚门四十载，只望门下弟子，行侠仗义，不负本心。
+  card:
+    version: 3
+    attitude: kindly, wise and dignified
+    ref_line: 孩子，习武先修心。心正，剑才正。
+    rationale: 人设与老年男性一致，只写语气
+- id: waiter
+  name: 店小二
+  type: sunny_youth
+  description: 客栈伙计，机灵热情
+  intro: 客官里边请！小店的酒是全城最香的，您要几斤？
+  card:
+    version: 3
+    pitch: hi
+    pace: fast
+    attitude: eager, fawning and cheerful
+    ref_line: 客官里边请，楼上雅座，好酒好菜马上就到。
+    rationale: 伙计招揽客人：快、殷勤（v2 此角色更好）

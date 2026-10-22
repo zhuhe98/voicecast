@@ -1,0 +1,20 @@
+# 示例台词表（原创）：与 campus.yaml 的角色对应。speaker 为角色 id；emotion 可省（平静），可选 happy / angry / sad / surprised
+scenes:
+  - id: s1
+    title: 放学后的走廊
+    lines:
+      - {speaker: hina, emotion: happy, text: 小桃，快点快点，社团活动要开始啦！}
+      - {speaker: momo, text: 学姐等等我嘛，便当盒还没收好呢。}
+      - {speaker: rei, emotion: angry, text: 站住。走廊上不许奔跑，你们两个都忘了吗？}
+      - {speaker: hina, emotion: surprised, text: 会、会长？您怎么在这里？}
+      - {speaker: rei, text: 学生会今天检查纪律。下不为例。}
+      - {speaker: shiori, text: 冰室同学，她们也是赶着去训练，就原谅这一次吧。}
+      - {speaker: rei, text: 白石同学，规定就是规定。}
+  - id: s2
+    title: 篮球场
+    lines:
+      - {speaker: sora, emotion: happy, text: 喂，黑崎！要不要来比一场？输的人请喝饮料！}
+      - {speaker: kai, text: 没兴趣。}
+      - {speaker: sora, text: 你是怕输给我吧？}
+      - {speaker: kai, text: 一场。输了别哭。}
+      - {speaker: sora, emotion: sad, text: ……我只是想有个人陪我打球而已。}

@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>voicecast 声音选角</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column; the cast network is the centerpiece, then the casting steps, then two short guarantees and the final lineups */
+:root {
+  --bg: #f4f5f2; --surface: #ffffff; --fg: #1d2421; --muted: #5d6a64; --line: #d9ded9;
+  --accent: #0f6e5c; --accent-soft: #dcefe9; --warn: #b4532a; --warn-soft: #f6e4da; --ava: #e7ebe6; --c1: #d9822b; --c2: #3b6fb6;
+  --display: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #141917; --surface: #1c2320; --fg: #e6ebe8; --muted: #9aa8a1; --line: #2e3833;
+  --accent: #4fc2a6; --accent-soft: #1e3a33; --warn: #e88a62; --warn-soft: #3d2a21; --ava: #2a332f; --c1: #f0a050; --c2: #6f9be0; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #141917; --surface: #1c2320; --fg: #e6ebe8; --muted: #9aa8a1; --line: #2e3833;
+  --accent: #4fc2a6; --accent-soft: #1e3a33; --warn: #e88a62; --warn-soft: #3d2a21; --ava: #2a332f; --c1: #f0a050; --c2: #6f9be0; color-scheme: dark }
+
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.7; }
+.wrap { max-width: 1040px; margin: 0 auto; padding-block: 0 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; line-height: 1.3; margin: 0; }
+h2 { font-size: 1.6rem; }
+h3 { font-size: 1.15rem; }
+p { margin: 0; max-width: 40em; }
+section { display: grid; gap: 24px; padding-block: 48px 8px; border-top: 1px solid var(--line); scroll-margin-top: 16px; }
+.eyebrow { font-family: var(--mono); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.muted { color: var(--muted); }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+a { color: var(--accent); }
+.note { font-size: .85rem; color: var(--muted); }
+
+/* hero */
+header.hero { display: grid; gap: 16px; padding-block: 56px 40px; }
+.hero h1 { font-size: clamp(2rem, 5.5vw, 3.3rem); font-weight: 900; letter-spacing: .02em; }
+.hero h1 small { display: block; font-family: var(--mono); font-size: .9rem; font-weight: 400; color: var(--muted); letter-spacing: .08em; margin-bottom: 8px; }
+.hero .lede { font-size: 1.1rem; }
+
+/* tabs + toggles */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.tabs button, .seg button { font: inherit; font-size: .95rem; padding: 6px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
+.tabs button[aria-selected="true"] { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); gap: 3px; }
+.seg button { border: 0; padding: 6px 18px; }
+.seg button[aria-pressed="true"].b { background: var(--warn); color: var(--bg); }
+.seg button[aria-pressed="true"].a { background: var(--accent); color: var(--bg); }
+
+/* network */
+.ens { display: grid; grid-template-columns: minmax(0, 440px) minmax(0, 1fr); gap: 32px; align-items: center; }
+.net { position: relative; width: 100%; aspect-ratio: 1; max-width: 100%; }
+.net svg.edges { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.net svg.edges text { font-family: var(--mono); font-size: 3.6px; }
+.node { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 2px; width: 26%;
+  background: none; border: 0; padding: 0; cursor: pointer; color: var(--fg); font: inherit; }
+.node .ring { border-radius: 50%; padding: 3px; border: 2px solid transparent; display: block; line-height: 0; background: var(--bg); }
+.node.on .ring { border-color: var(--accent); }
+.node.b.on .ring { border-color: var(--warn); }
+.node b { font-size: .82rem; line-height: 1.2; text-align: center; }
+.node small { font-size: .7rem; color: var(--muted); line-height: 1.2; text-align: center; }
+.node .chg { font-size: .65rem; color: var(--accent); }
+.side { display: grid; gap: 16px; align-content: start; min-width: 0; }
+.big { font-family: var(--mono); font-size: 2.6rem; font-weight: 600; line-height: 1.05; color: var(--accent); }
+.stat { display: grid; gap: 2px; }
+.stat .cap { font-size: .85rem; color: var(--muted); }
+.pairbox { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 10px; }
+.pairbox .t { font-size: .85rem; color: var(--muted); }
+.pairbox .who { font-weight: 700; }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: .8rem; color: var(--muted); align-items: center; }
+.legend i { display: inline-block; width: 22px; height: 0; border-top: 3px solid var(--warn); vertical-align: middle; margin-right: 6px; }
+.legend i.m { border-top: 1.5px solid var(--muted); opacity: .6; }
+
+.pair2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.netcol { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 6px; min-width: 0; }
+.netcol figcaption { display: grid; gap: 2px; }
+.netcol figcaption b { font-family: var(--display); font-size: 1.1rem; }
+.netcol figcaption span { font-size: .85rem; color: var(--muted); }
+.xb { color: var(--warn); } .ob { color: var(--accent); }
+.voices { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.vrow { display: grid; align-content: start; justify-items: start; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-width: 0; }
+.vrow .nm { min-width: 0; display: grid; gap: 2px; }
+.vrow .nm b { font-size: 1.05rem; }
+.vrow .nm span { font-size: .85rem; color: var(--muted); }
+.vrow .btns { gap: 8px; }
+.vrow { padding: 14px; }
+.vrow .same { font-size: .72rem; color: var(--muted); }
+@media (max-width: 760px) { .pair2 { grid-template-columns: 1fr; } }
+
+.pairdemo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 20px; align-items: stretch; }
+.pcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 14px; align-content: start; min-width: 0; }
+.pcard .duo { display: grid; grid-template-columns: 1fr 1fr; column-gap: 16px; row-gap: 4px; align-items: start; justify-items: start; }
+.pcard .duo .ava { margin-bottom: 4px; }
+.pcard .duo b { font-size: 1.05rem; }
+.pcard .duo span { font-size: .82rem; color: var(--muted); }
+.pcard .duo .lab { grid-column: 1 / -1; font-size: .85rem; font-weight: 700; margin-top: 10px; }
+.pcard .duo .lab.x { color: var(--warn); } .pcard .duo .lab.o { color: var(--accent); }
+.pcard .duo .say { grid-column: 1 / -1; margin-top: 10px; }
+.pcard .say { font-size: .9rem; border-left: 2px solid var(--line); padding-left: 10px; }
+.pcard .row { display: grid; gap: 6px; }
+.pcard .row .lab { font-size: .85rem; font-weight: 700; }
+.pcard .row.x .lab { color: var(--warn); } .pcard .row.o .lab { color: var(--accent); }
+.vprint { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 10px; min-width: 0; }
+.vprint .plots { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.vprint figure { margin: 0; display: grid; gap: 4px; justify-items: center; }
+.vprint svg { width: 100%; max-width: 260px; height: auto; }
+.vprint figcaption { font-size: .85rem; text-align: center; }
+.vprint figcaption b { display: block; }
+.vprint .key { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: .8rem; color: var(--muted); }
+.vprint .key i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: -1px; margin-right: 6px; }
+@media (max-width: 760px) { .pairdemo { grid-template-columns: 1fr; } }
+
+/* steps */
+ol.axis { list-style: none; margin: 0; padding: 0; display: grid; }
+ol.axis > li { display: grid; grid-template-columns: 40px 1fr; gap: 16px; }
+.dot { display: grid; justify-items: center; grid-template-rows: auto 1fr; }
+.dot span { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: var(--bg); font-family: var(--mono); font-size: .9rem; display: grid; place-items: center; }
+.dot i { width: 2px; background: var(--line); }
+ol.axis > li:last-child .dot i { display: none; }
+.step { display: grid; gap: 10px; padding-bottom: 32px; min-width: 0; }
+.step h3 { padding-top: 3px; }
+.step .who { font-size: .8rem; font-weight: 700; color: var(--muted); letter-spacing: .04em; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 10px; min-width: 0; }
+.roster { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.roster > div { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.roster b { display: block; font-size: .9rem; }
+.roster span { font-size: .78rem; color: var(--muted); }
+.rounds { display: grid; gap: 0; }
+.round { display: grid; grid-template-columns: 4.5em 1fr; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); align-items: start; }
+.round:first-child { border-top: 0; }
+.round .k { font-size: .82rem; color: var(--muted); padding-top: 2px; }
+.round .s { display: grid; gap: 6px; }
+.round.end .k { color: var(--accent); }
+.bar { height: 8px; border-radius: 4px; background: var(--bg); position: relative; max-width: 260px; }
+.bar i { position: absolute; inset: 0 auto 0 0; border-radius: 4px; background: var(--warn); }
+.round.end .bar i { background: var(--accent); }
+
+/* guarantees */
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.gcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.vs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.vs > div { border-radius: 8px; padding: 10px; display: grid; gap: 8px; align-content: start; }
+.vs .x { background: var(--warn-soft); } .vs .o { background: var(--accent-soft); }
+.vs .lab { font-size: .85rem; font-weight: 700; }
+.vs .x .lab { color: var(--warn); } .vs .o .lab { color: var(--accent); }
+.lrow { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 6px 0; border-top: 1px solid var(--line); font-size: .9rem; }
+.lrow:first-of-type { border-top: 0; }
+
+/* lineup board */
+.boardhead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.cast { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.card .top { display: flex; align-items: center; gap: 12px; }
+.card .who { flex: 1; min-width: 0; }
+.tag { font-size: .8rem; color: var(--muted); }
+.line { font-size: .95rem; border-left: 2px solid var(--line); padding-left: 10px; }
+
+.ava { flex: none; border-radius: 50%; background: var(--ava); overflow: hidden; display: block; }
+
+/* play buttons */
+button.play { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--accent); background: transparent; color: var(--accent); cursor: pointer; display: grid; place-items: center; padding: 0; }
+button.play svg { width: 14px; height: 14px; fill: currentColor; }
+button.wide { font: inherit; font-size: .88rem; display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px; border-radius: 999px; border: 1.5px solid var(--accent); background: transparent; color: var(--accent); cursor: pointer; }
+button.wide svg { width: 12px; height: 12px; fill: currentColor; }
+.x button.wide, button.wide.x { border-color: var(--warn); color: var(--warn); }
+button.on { background: var(--accent) !important; color: var(--bg) !important; }
+.x button.on, button.wide.x.on { background: var(--warn) !important; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+footer { border-top: 1px solid var(--line); padding-block: 28px 0; margin-top: 48px; font-size: .85rem; color: var(--muted); }
+
+@media (max-width: 760px) {
+  .ens { grid-template-columns: 1fr; }
+  .two { grid-template-columns: 1fr; }
+}
+@media (max-width: 420px) { .vs { grid-template-columns: 1fr; } .node small { display: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  button.play, button.wide, .seg button { transition: background .15s, color .15s; }
+  .net svg.edges line { transition: stroke-width .3s, opacity .3s; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header class="hero">
+  <h1><small>voicecast · 群像声音选角</small>一部剧里的每个角色，声音都要分得清</h1>
+  <p class="lede">AI 短剧、漫剧、有声书里一次要配六个、十个角色。每个角色单独生成一个合适的声音不难，难的是放在一起时，观众仍然听得出谁是谁。voicecast 把整组角色放在一起挑声音。</p>
+</header>
+
+<section id="ensemble">
+  <div class="eyebrow">核心问题</div>
+  <h2>各自挑声音，放在一起就撞了</h2>
+  <p class="muted">每个角色各自挑一个合适的声音，没人管它们彼此像不像。</p>
+  <p class="muted">以一部校园剧的六个角色为例。左右两张图里，每个头像是一个角色；两个角色之间的连线越粗越红，两个声音就越像，越容易被听成同一个人。点头像可以听声音。</p>
+  <div class="pair2">
+    <figure class="netcol"><figcaption><b class="xb">各自挑</b><span id="capb"></span></figcaption><div class="net" id="netb"></div></figure>
+    <figure class="netcol"><figcaption><b class="ob">整组一起挑</b><span id="capa"></span></figcaption><div class="net" id="neta"></div></figure>
+  </div>
+  <div class="legend"><span><i></i>很像（相似度 0.65 以上）</span><span><i class="m"></i>有点像，线越粗越像</span><span>没有连线 = 差别明显</span><span>相似度在 0 到 1 之间，越接近 1 越像同一个人</span></div>
+  <h3>听一对：最像的两个角色</h3>
+  <div class="pairdemo" id="pairdemo"></div>
+</section>
+
+<section id="method">
+  <div class="eyebrow">方法</div>
+  <h2>整组选角是怎么进行的</h2>
+  <p class="muted">以校园剧的六个角色为例。</p>
+  <ol class="axis" id="axis"></ol>
+</section>
+
+<section id="more">
+  <div class="eyebrow">另外两项保证</div>
+  <h2>年龄性别不跑偏，选定后不变声</h2>
+  <div class="two">
+    <div class="gcard" id="gtype"></div>
+    <div class="gcard" id="glock"></div>
+  </div>
+</section>
+
+<section id="cast">
+  <div class="eyebrow">最终效果</div>
+  <h2>四组阵容的自我介绍</h2>
+  <p class="muted">声音锁定后，每个角色说一句自我介绍。全部由程序自动选角。</p>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div class="boardhead"><p id="lsub" class="muted"></p><button class="wide" id="epi" type="button"></button></div>
+  <div class="cast" id="board"><p class="muted">正在载入……</p></div>
+</section>
+
+<footer>所有声音均为模型按文字描述合成的原创声音，没有克隆任何真人。头像为示意插画。角色与台词为演示用原创内容。</footer>
+</div>
+
+<script>
+/* ---------- audio ---------- */
+const ICON = {
+  play: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9.5-5.5z"/></svg>',
+  stop: '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="3.5" width="9" height="9" rx="1"/></svg>'
+};
+const player = new Audio();
+let current = null;
+function stopAll() {
+  player.pause();
+  if (current) { current.classList.remove("on"); if (current.dataset.idle) current.innerHTML = current.dataset.idle; }
+  current = null;
+}
+player.addEventListener("ended", stopAll);
+function play(btn, src, swap) {
+  if (current === btn) { stopAll(); return; }
+  stopAll();
+  player.src = src; player.play().catch(() => {});
+  current = btn; btn.classList.add("on");
+  if (swap) btn.innerHTML = swap;
+}
+function playBtn(src, label, cls, aria) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = (label ? "wide" : "play") + (cls ? " " + cls : "");
+  btn.dataset.idle = ICON.play + (label ? `<span>${esc(label)}</span>` : "");
+  btn.innerHTML = btn.dataset.idle;
+  btn.setAttribute("aria-label", "播放 " + (aria || label || ""));
+  btn.addEventListener("click", () => play(btn, src, ICON.stop + (label ? `<span>${esc(label)}</span>` : "")));
+  return btn;
+}
+const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+/* ---------- avatars: parametric bust per voice type ---------- */
+const SKIN = "#f2d3b8", SKIN2 = "#e9c09f";
+const LOOK = {
+  "霸道总裁":   { hair: "#1f1f24", style: "slick", eyes: "narrow", cloth: "#2b2f3a", tie: "#7a1f2b" },
+  "温婉女主":   { hair: "#5b3a29", style: "long", eyes: "soft", cloth: "#e8dccb" },
+  "精明泼辣":   { hair: "#8a2f2a", style: "wave", eyes: "sharp", cloth: "#c2414b", ear: true, lips: true },
+  "温润公子":   { hair: "#4a3528", style: "side", eyes: "soft", cloth: "#f2f2ee", glasses: true },
+  "老年女性":   { hair: "#c9c6c0", style: "bun", eyes: "soft", cloth: "#6b4a5a", glasses: true, old: true },
+  "阳光弟弟":   { hair: "#6b4a2b", style: "messy", eyes: "smile", cloth: "#3f86c9", mouth: "grin" },
+  "冷峻青年":   { hair: "#16161a", style: "bang", eyes: "narrow", cloth: "#30343c" },
+  "冷淡御姐":   { hair: "#1d1d2b", style: "long", eyes: "narrow", cloth: "#2e3346" },
+  "元气少女":   { hair: "#e0782c", style: "pony", eyes: "smile", cloth: "#f2f2f2", mouth: "grin", collar: "#2f5aa8" },
+  "阴狠反派":   { hair: "#2a1b1b", style: "slick", eyes: "sharp", cloth: "#3a1f24", scar: true },
+  "老年男性":   { hair: "#d8d6d0", style: "bald", eyes: "soft", cloth: "#55606b", beard: "#e4e2dc", old: true },
+  "阳光青年":   { hair: "#3b2a1e", style: "messy", eyes: "smile", cloth: "#5c8a4a", mouth: "grin", band: "#f2f2f2" },
+  "少年":       { hair: "#2b2f45", style: "spiky", eyes: "smile", cloth: "#d9534f", mouth: "grin" },
+  "萝莉":       { hair: "#f29bb6", style: "twin", eyes: "big", cloth: "#fbe3ea", mouth: "o" },
+  "低沉大叔":   { hair: "#3a3530", style: "short", eyes: "narrow", cloth: "#6b5a44", stubble: true },
+  "旁白（男）": { hair: "#8d8780", style: "short", eyes: "soft", cloth: "#2f3a46", glasses: true, old: true },
+  "温柔少女 / 大小姐": { hair: "#d9b26a", style: "long", eyes: "soft", cloth: "#f5eef6", ribbon: "#c7577d" }
+};
+function avatar(type, size) {
+  const L = LOOK[type] || { hair: "#555", style: "short", eyes: "soft", cloth: "#777" };
+  const h = L.hair, p = [];
+  // back hair
+  if (L.style === "long") p.push(`<path d="M28 44 Q26 22 50 20 Q74 22 72 44 L76 88 L24 88 Z" fill="${h}"/>`);
+  if (L.style === "wave") p.push(`<path d="M27 42 Q24 20 50 19 Q76 20 73 42 Q80 60 74 80 Q66 86 60 78 L40 78 Q34 86 26 80 Q20 60 27 42Z" fill="${h}"/>`);
+  if (L.style === "twin") p.push(`<ellipse cx="22" cy="58" rx="9" ry="20" fill="${h}"/><ellipse cx="78" cy="58" rx="9" ry="20" fill="${h}"/>`);
+  if (L.style === "pony") p.push(`<path d="M66 30 Q86 34 80 62 Q76 50 68 44Z" fill="${h}"/>`);
+  if (L.style === "bun") p.push(`<circle cx="50" cy="18" r="9" fill="${h}"/>`);
+  // body
+  p.push(`<path d="M18 100 Q20 76 50 74 Q80 76 82 100Z" fill="${L.cloth}"/>`);
+  if (L.collar) p.push(`<path d="M38 76 L50 90 L62 76 L56 75 L50 82 L44 75Z" fill="${L.collar}"/>`);
+  if (L.tie) p.push(`<path d="M44 75 L50 80 L56 75 L53 98 L50 100 L47 98Z" fill="#f2f2ee"/><path d="M48.5 80 L51.5 80 L53 96 L50 99 L47 96Z" fill="${L.tie}"/>`);
+  p.push(`<rect x="44" y="62" width="12" height="14" rx="5" fill="${SKIN2}"/>`);
+  // head
+  p.push(`<ellipse cx="50" cy="46" rx="19" ry="21" fill="${SKIN}"/>`);
+  if (L.ear) p.push(`<circle cx="31" cy="54" r="2.2" fill="#e5c25a"/><circle cx="69" cy="54" r="2.2" fill="#e5c25a"/>`);
+  // eyes
+  const E = { narrow: `<path d="M38 47 L46 46" stroke="#222" stroke-width="2.2" stroke-linecap="round"/><path d="M54 46 L62 47" stroke="#222" stroke-width="2.2" stroke-linecap="round"/>`,
+    sharp: `<path d="M37 45 L46 47" stroke="#222" stroke-width="2.4" stroke-linecap="round"/><path d="M54 47 L63 45" stroke="#222" stroke-width="2.4" stroke-linecap="round"/>`,
+    soft: `<circle cx="42" cy="47" r="2.3" fill="#2a2a2a"/><circle cx="58" cy="47" r="2.3" fill="#2a2a2a"/>`,
+    smile: `<path d="M38 48 Q42 43 46 48" stroke="#222" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M54 48 Q58 43 62 48" stroke="#222" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
+    big: `<ellipse cx="42" cy="48" rx="3.6" ry="4.4" fill="#3a2a3a"/><ellipse cx="58" cy="48" rx="3.6" ry="4.4" fill="#3a2a3a"/><circle cx="43.2" cy="46.5" r="1.3" fill="#fff"/><circle cx="59.2" cy="46.5" r="1.3" fill="#fff"/>` };
+  p.push(E[L.eyes] || E.soft);
+  // mouth
+  const M = { grin: `<path d="M44 56 Q50 62 56 56Z" fill="#a8434d"/>`, o: `<ellipse cx="50" cy="57" rx="2.4" ry="2.8" fill="#a8434d"/>` };
+  p.push(M[L.mouth] || (L.lips ? `<path d="M45 57 Q50 59.5 55 57" stroke="#b8323f" stroke-width="2.4" fill="none" stroke-linecap="round"/>` : `<path d="M46 57 Q50 58.5 54 57" stroke="#8a5a4a" stroke-width="1.6" fill="none" stroke-linecap="round"/>`));
+  if (L.old) p.push(`<path d="M36 52 Q38 54 40 52 M60 52 Q62 54 64 52" stroke="#c49a80" stroke-width="1" fill="none"/>`);
+  if (L.scar) p.push(`<path d="M60 38 L66 54" stroke="#9a3a3a" stroke-width="1.6"/>`);
+  if (L.stubble) p.push(`<path d="M34 54 Q36 68 50 68 Q64 68 66 54 Q60 62 50 62 Q40 62 34 54Z" fill="${h}" opacity=".45"/>`);
+  if (L.beard) p.push(`<path d="M35 54 Q36 80 50 84 Q64 80 65 54 Q60 60 50 60 Q40 60 35 54Z" fill="${L.beard}"/><path d="M42 57 Q50 54 58 57" stroke="${L.beard}" stroke-width="3" fill="none"/>`);
+  if (L.glasses) p.push(`<g stroke="#3a3a3a" stroke-width="1.4" fill="none"><circle cx="42" cy="47" r="5"/><circle cx="58" cy="47" r="5"/><path d="M47 47 L53 47"/></g>`);
+  // front hair
+  const F = {
+    slick: `<path d="M30 42 Q30 22 50 22 Q72 22 70 42 Q66 30 50 30 Q38 30 30 42Z" fill="${h}"/>`,
+    long: `<path d="M30 46 Q28 24 50 23 Q72 24 70 46 Q64 32 54 30 Q44 36 30 46Z" fill="${h}"/>`,
+    wave: `<path d="M30 44 Q30 22 50 22 Q70 22 70 44 Q62 30 50 32 Q40 30 30 44Z" fill="${h}"/>`,
+    side: `<path d="M30 44 Q30 22 52 22 Q72 24 70 42 Q60 30 40 34 Q34 38 30 44Z" fill="${h}"/>`,
+    bun: `<path d="M31 42 Q32 24 50 24 Q68 24 69 42 Q62 30 50 30 Q38 30 31 42Z" fill="${h}"/>`,
+    messy: `<path d="M29 44 L30 30 Q36 18 50 20 Q66 18 71 32 L71 44 L66 34 L61 38 L56 32 L50 37 L44 31 L38 37 L34 33Z" fill="${h}"/>`,
+    bang: `<path d="M30 46 Q28 22 50 22 Q72 22 70 42 Q66 34 60 32 L56 52 L50 34 Q42 36 30 46Z" fill="${h}"/>`,
+    pony: `<path d="M30 44 Q30 22 50 22 Q70 22 70 44 L66 34 L58 36 L52 31 L44 36 L36 33Z" fill="${h}"/>`,
+    bald: `<path d="M31 44 Q30 34 34 32 L34 44Z M69 44 Q70 34 66 32 L66 44Z" fill="${h}"/>`,
+    spiky: `<path d="M29 44 L26 26 L36 30 L38 16 L46 26 L52 12 L56 26 L66 16 L66 30 L75 28 L71 44 Q62 32 50 32 Q38 32 29 44Z" fill="${h}"/>`,
+    twin: `<path d="M30 44 Q30 22 50 22 Q70 22 70 44 L64 34 L56 37 L50 32 L44 37 L36 34Z" fill="${h}"/>`,
+    short: `<path d="M30 42 Q30 22 50 22 Q70 22 70 42 Q66 30 50 29 Q36 30 30 42Z" fill="${h}"/>`
+  };
+  p.push(F[L.style] || F.short);
+  if (L.band) p.push(`<path d="M30 36 Q50 26 70 36 L70 40 Q50 30 30 40Z" fill="${L.band}"/>`);
+  if (L.ribbon) p.push(`<path d="M60 22 L70 16 L70 28Z M60 22 L52 15 L52 28Z" fill="${L.ribbon}"/>`);
+  if (L.style === "twin") p.push(`<circle cx="27" cy="38" r="3" fill="#f2c94c"/><circle cx="73" cy="38" r="3" fill="#f2c94c"/>`);
+  return `<svg class="ava" width="${size}" height="${size}" viewBox="0 0 100 100" role="img" aria-label="${esc(type)}插画">${p.join("")}</svg>`;
+}
+
+
+
+/* ---------- cast network ---------- */
+const STRONG = 0.65, SHOW = 0.45;
+function maxPair(E, m) {
+  let best = [-1, 0, 0];
+  for (let i = 0; i < E.ids.length; i++) for (let j = i + 1; j < E.ids.length; j++) if (m[i][j] > best[0]) best = [m[i][j], i, j];
+  return best;
+}
+const countStrong = m => { let n = 0; for (let i = 0; i < m.length; i++) for (let j = i + 1; j < m.length; j++) if (m[i][j] >= STRONG) n++; return n; };
+
+function drawNet(net, E, mode) {
+  const m = E[mode], n = E.ids.length;
+  const pos = E.ids.map((_, i) => { const a = -Math.PI / 2 + i * 2 * Math.PI / n; return [50 + 36 * Math.cos(a), 50 + 36 * Math.sin(a)]; });
+  const [ms, mi, mj] = maxPair(E, m);
+  let svg = '<svg class="edges" viewBox="0 0 100 100" aria-hidden="true">';
+  for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+    const s = m[i][j];
+    if (s < SHOW) continue;
+    const strong = s >= STRONG && mode === "before";
+    svg += `<line x1="${pos[i][0]}" y1="${pos[i][1]}" x2="${pos[j][0]}" y2="${pos[j][1]}" stroke="${strong ? "var(--warn)" : "var(--muted)"}" stroke-width="${(0.3 + (s - SHOW) * 6).toFixed(2)}" stroke-linecap="round" opacity="${strong ? 0.9 : s >= STRONG ? 0.7 : 0.45}"/>`;
+  }
+  const mx = (pos[mi][0] + pos[mj][0]) / 2, my = (pos[mi][1] + pos[mj][1]) / 2;
+  svg += `<rect x="${mx - 5}" y="${my - 3.2}" width="10" height="5.4" rx="1.2" fill="var(--surface)" stroke="var(--line)" stroke-width=".3"/><text x="${mx}" y="${my + 1}" text-anchor="middle" fill="var(--fg)">${ms.toFixed(2)}</text>`;
+  net.innerHTML = svg + "</svg>";
+  E.characters.forEach((c, i) => {
+    const b = el("button", "node " + (mode === "before" ? "b" : "a"));
+    b.type = "button";
+    b.style.left = pos[i][0] + "%"; b.style.top = pos[i][1] + "%";
+    b.setAttribute("aria-label", `播放 ${c.name}（${mode === "before" ? "各自挑" : "整组一起挑"}）`);
+    b.innerHTML = `<span class="ring">${avatar(c.type, 48)}</span><b>${esc(c.name)}</b><small>${esc(c.type)}</small>`;
+    b.addEventListener("click", () => play(b, c[mode]));
+    net.appendChild(b);
+  });
+  const ca = E.characters[mi], cb = E.characters[mj];
+  return `最像的一对：${ca.name}和${cb.name}，相似度 ${ms.toFixed(2)}；很像的组合 ${countStrong(m)} 对`;
+}
+
+function renderEnsemble(D) {
+  const E = D.ensemble.find(e => e.key === "campus") || D.ensemble[0];
+  document.getElementById("capb").textContent = drawNet(document.getElementById("netb"), E, "before");
+  document.getElementById("capa").textContent = drawNet(document.getElementById("neta"), E, "after");
+}
+
+/* ---------- pair listening + voiceprint overlap ---------- */
+function vpPath(emb, cx, cy, R) {
+  const n = emb.length, z = Math.sqrt(n), pts = [];
+  for (let k = 0; k < n; k++) {
+    const v = (emb[(k + n - 1) % n] + 2 * emb[k] + emb[(k + 1) % n]) / 4 * z;
+    const r = R * (1 + 0.16 * Math.max(-2.5, Math.min(2.5, v))), a = -Math.PI / 2 + k * 2 * Math.PI / n;
+    pts.push(`${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)}`);
+  }
+  return "M" + pts.join("L") + "Z";
+}
+function vpSvg(st) {
+  const d = 200 * (1 - st.sim), cx = 120, R = 46;
+  return `<svg viewBox="0 0 240 150" role="img" aria-label="两个声音的声纹，相似度 ${st.sim.toFixed(2)}">
+    <path d="${vpPath(st.emb_a, cx - d / 2, 75, R)}" fill="var(--c1)" fill-opacity=".5" stroke="var(--c1)" stroke-width="1"/>
+    <path d="${vpPath(st.emb_b, cx + d / 2, 75, R)}" fill="var(--c2)" fill-opacity=".5" stroke="var(--c2)" stroke-width="1"/></svg>`;
+}
+function renderPair(D) {
+  const P = D.pairs[0], box = document.getElementById("pairdemo");
+  box.innerHTML = `
+    <div class="pcard">
+      <div class="duo">
+        ${avatar(P.a.type, 52)}${avatar(P.b.type, 52)}
+        <b>${esc(P.a.name)}</b><b>${esc(P.b.name)}</b>
+        <span>${esc(P.a.type)}</span><span>${esc(P.b.type)}</span>
+        <span>${esc(P.a.description)}</span><span>${esc(P.b.description)}</span>
+        <p class="say">两人说同一句话，只听声音的差别：${esc(P.line)}</p>
+        <span class="lab x">各自挑：两人很像</span><span class="x" data-k="ba"></span><span class="x" data-k="bb"></span>
+        <span class="lab o">整组一起挑：拉开了</span><span data-k="aa"></span><span data-k="ab"></span>
+      </div>
+    </div>
+    <div class="vprint">
+      <div class="plots">
+        <figure>${vpSvg(P.before)}<figcaption><b class="xb">各自挑</b>相似度 <span class="num">${P.before.sim.toFixed(2)}</span></figcaption></figure>
+        <figure>${vpSvg(P.after)}<figcaption><b class="ob">整组一起挑</b>相似度 <span class="num">${P.after.sim.toFixed(2)}</span></figcaption></figure>
+      </div>
+      <div class="key"><span><i style="background:var(--c1)"></i>${esc(P.a.name)}</span><span><i style="background:var(--c2)"></i>${esc(P.b.name)}</span></div>
+      <p class="note">每个形状是一个声音的声纹，由声音识别模型从录音中提取。两个形状叠得越多，两个声音越像；两形状之间的距离按相似度换算。</p>
+    </div>`;
+  const slot = k => box.querySelector(`[data-k="${k}"]`);
+  slot("ba").appendChild(playBtn(P.before.a, P.a.name, "x"));
+  slot("bb").appendChild(playBtn(P.before.b, P.b.name, "x"));
+  slot("aa").appendChild(playBtn(P.after.a, P.a.name));
+  slot("ab").appendChild(playBtn(P.after.b, P.b.name));
+}
+
+/* ---------- method ---------- */
+function renderAxis(D) {
+  const E = D.ensemble.find(e => e.key === "campus") || D.ensemble[0];
+  const pool = Object.values(E.pool), lo = Math.min(...pool), hi = Math.max(...pool);
+  const roster = E.characters.map(c => `<div>${avatar(c.type, 44)}<div><b>${esc(c.name)}</b><span>${esc(c.type)}</span></div></div>`).join("");
+  const ma = maxPair(E, E.after)[0];
+  const rounds = E.steps.map((s, k) => `<div class="round"><span class="k">第 ${k + 1} 轮</span><div class="s">
+      <span><b>${esc(s.a)}</b> 和 <b>${esc(s.b)}</b> 最像，相似度 <span class="num">${s.sim.toFixed(2)}</span></span>
+      <div class="bar"><i style="width:${s.sim * 100}%"></i></div>
+      <span class="note">给${esc(s.who)}换一个声音（${s.to_source === "音色库" ? "换成音色库里的另一个" : "换成另一个现场生成的"}）</span></div></div>`).join("") +
+    `<div class="round end"><span class="k">结束</span><div class="s"><span>再换谁都不能让最像的一对更不像，停止。最像的一对只剩 <span class="num">${ma.toFixed(2)}</span></span>
+      <div class="bar"><i style="width:${ma * 100}%"></i></div></div></div>`;
+  const steps = [
+    { who: "AI 助手", t: "读角色表，给每个角色定类型", body: `<p class="muted">类型决定年龄、性别和大致音高，比如"元气少女"是十七岁左右的高音女孩。类型不同的角色天然就分得开，真正难的是同类型或相邻类型的角色，比如这里的元气少女和萝莉。</p><div class="panel roster">${roster}</div>` },
+    { who: "程序", t: "给每个角色准备一批候选声音", body: `<p class="muted">一部分来自提前做好的音色库（22 个类型，每类 24 个，已检查过年龄性别），一部分按角色描述现场生成。这一组每个角色有 ${lo}–${hi} 个候选。别的作品已经用过的声音不会再出现。</p>` },
+    { who: "程序", t: "整组一起挑：反复拆开最像的一对", body: `<p class="muted">先让每个角色各拿一个候选，然后找出全组最像的两个角色，试着给其中一个换候选，换成能让全组最像的一对变得最不像的那个。重复，直到换不动为止。</p><div class="panel rounds">${rounds}</div><a class="note" href="#ensemble">对比上面的两张关系图 ↑</a>` },
+    { who: "你", t: "每个角色给三个选项，你来拍板", body: `<p class="muted">AI 判断不了"这个声音像不像这个角色"，所以最后由人来选。三个选项都已经避开了其他角色当前的声音；不满意可以换一批，新的选项同样会避开。</p>` },
+    { who: "程序", t: "锁定整组，开始配音", body: `<p class="muted">每个角色的声音存成一段参考录音。之后每一句台词都克隆这个声音，整部作品里同一个角色始终是同一个人。</p><a class="note" href="#glock">锁定前后的对比 ↓</a>` }
+  ];
+  const ax = document.getElementById("axis");
+  steps.forEach((s, i) => ax.appendChild(el("li", null, `<div class="dot"><span>${i + 1}</span><i></i></div><div class="step"><span class="who">${s.who}</span><h3>${s.t}</h3>${s.body}</div>`)));
+}
+
+/* ---------- guarantees ---------- */
+function renderMore(D) {
+  const ex = D.examples.find(e => e.before.audio.includes("xiao"));
+  const g = document.getElementById("gtype");
+  g.innerHTML = `<h3>年龄性别不跑偏</h3>
+    <p class="muted">只靠文字描述时，"十七岁男孩，活泼爱撒娇"被生成成了女声。现在年龄、性别、音高由类型固定，AI 只能写语气。</p>
+    <p class="note">用音高来看：声音的音高用每秒振动多少次（赫兹）来衡量，十七岁男孩大约在 110–230 之间。改之前是 ${ex.before.f0}，落在女声范围；改之后是 ${ex.after.f0}。</p>
+    <div class="vs"><div class="x"><span class="lab">只靠文字描述</span><div class="btns"></div></div><div class="o"><span class="lab">按类型固定</span><div class="btns"></div></div></div>`;
+  const b = g.querySelectorAll(".btns");
+  b[0].appendChild(playBtn(ex.before.audio, "阳光弟弟", "x"));
+  b[1].appendChild(playBtn(ex.after.audio, "阳光弟弟"));
+
+  const k = D.lock, l = document.getElementById("glock");
+  l.innerHTML = `<h3>选定后不变声</h3>
+    <p class="muted">${esc(k.name)}（${esc(k.type)}）的三句台词。不锁定时每句都重新生成，听起来像三个人；锁定后三句是同一个人，只是情绪不同。</p>
+    <div class="rows"></div>
+    <p class="note">三句之间的相似度：不锁定 <span class="num">${k.free_sim.toFixed(2)}</span>，锁定 <span class="num">${k.lock_sim.toFixed(2)}</span>。</p>`;
+  const rows = l.querySelector(".rows");
+  for (const x of k.lines) {
+    const r = el("div", "lrow");
+    r.appendChild(el("span", null, `<span class="note">${esc(x.emotion)}</span> ${esc(x.text)}`));
+    r.append(playBtn(x.free, "不锁定", "x"), playBtn(x.locked, "锁定"));
+    rows.appendChild(r);
+  }
+}
+
+/* ---------- lineups ---------- */
+function showLineup(D, i) {
+  stopAll();
+  const L = D.lineups[i];
+  document.querySelectorAll("#tabs button").forEach((b, j) => b.setAttribute("aria-selected", j === i));
+  document.getElementById("lsub").textContent = `${L.subtitle} · ${L.characters.length} 个角色`;
+  const old = document.getElementById("epi"), epi = playBtn(L.episode, "连续播放全部");
+  epi.id = "epi"; old.replaceWith(epi);
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+  for (const c of L.characters) {
+    const card = el("article", "card");
+    const top = el("div", "top");
+    top.insertAdjacentHTML("beforeend", avatar(c.type, 56));
+    top.appendChild(el("div", "who", `<h3>${esc(c.name)}</h3><div class="tag">${esc(c.type)} · ${esc(c.description)}</div>`));
+    top.appendChild(playBtn(c.audio, "", "", c.name));
+    card.appendChild(top);
+    card.appendChild(el("p", "line", esc(c.intro)));
+    board.appendChild(card);
+  }
+}
+
+function render(D) {
+  renderEnsemble(D); renderPair(D); renderAxis(D); renderMore(D);
+  const tabs = document.getElementById("tabs");
+  D.lineups.forEach((L, i) => {
+    const b = el("button", null, esc(L.title));
+    b.type = "button"; b.setAttribute("role", "tab");
+    b.addEventListener("click", () => showLineup(D, i));
+    tabs.appendChild(b);
+  });
+  showLineup(D, 0);
+}
+
+fetch("data.json").then(r => r.json()).then(render).catch(err => {
+  console.error(err);
+  document.getElementById("netb").innerHTML = '<p class="muted">数据没有载入。本地预览请在 site 目录运行 python -m http.server 后用浏览器打开。</p>';
+});
+</script>
+</body>
+</html>

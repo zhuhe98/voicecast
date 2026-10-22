@@ -1,0 +1,69 @@
+# 示例阵容：奇幻冒险（声音卡 v3，由 Agent 按 skills/voicecast/SKILL.md 填写）
+characters:
+- id: hero
+  name: 少年勇者雷恩
+  type: shounen
+  description: 十五岁，被选中的勇者，热血
+  intro: 我是雷恩！总有一天，我一定会打倒魔王，守护大家！
+  card:
+    version: 3
+    attitude: passionate and determined
+    ref_line: 就算只剩我一个人，我也绝对不会后退。
+    rationale: 人设与少年一致，只写语气
+- id: mage
+  name: 魔法少女米娅
+  type: genki_girl
+  description: 十四岁，冒失的火系魔法师
+  intro: 米娅参上！看我的火球术——啊，又烧到自己的头发了！
+  card:
+    version: 3
+    attitude: clumsy, excitable and cheerful
+    ref_line: 糟了，咒语好像念反了，大家快趴下。
+    rationale: 人设与元气少女一致，只写语气
+- id: elf
+  name: 精灵弓手希尔薇
+  type: cool_lady
+  description: 三百岁的精灵，外表成熟，冷淡高傲
+  intro: 人类的寿命，不过是我们眼中的一瞬。别拖我的后腿。
+  card:
+    version: 3
+    attitude: aloof, elegant and disdainful
+    ref_line: 人类，你的箭术还差得远。
+    rationale: 人设与冷淡御姐一致，只写语气
+- id: dragon
+  name: 龙族幼崽露露
+  type: loli
+  description: 外表是小女孩的龙族，贪吃
+  intro: 露露才不是小孩子！露露是伟大的龙族！……那个肉干可以给露露吗？
+  card:
+    version: 3
+    pitch: hi
+    attitude: proud, greedy and childish
+    ref_line: 露露可是伟大的龙族，快把肉干交出来。
+    rationale: 傲娇贪吃的小孩：音高取高档
+- id: merc
+  name: 佣兵队长格雷
+  type: deep_uncle
+  description: 四十多岁的老练佣兵
+  intro: 我是格雷。跟着我，至少能让你们活着回去。
+  card:
+    version: 3
+    quality:
+    - gravelly
+    attitude: gruff, seasoned and reassuring
+    ref_line: 别慌，跟紧我。这种场面，我见多了。
+    rationale: 老练佣兵：粗粝（v2 此角色更好）
+- id: narrator
+  name: 旁白
+  type: narrator_male
+  description: 史诗感的旁白
+  intro: 在遥远的艾尔德大陆，一段新的冒险，即将开始。
+  card:
+    version: 3
+    quality:
+    - deep
+    - resonant
+    pace: slow
+    attitude: grand, solemn and epic
+    ref_line: 千年之前，诸神陨落，大地陷入了漫长的黑暗。
+    rationale: 史诗旁白：浑厚、缓慢、庄严
