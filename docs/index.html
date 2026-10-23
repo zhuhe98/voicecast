@@ -3,7 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>voicecast 声音选角</title>
+<title>voicecast · 解决 AI 配音撞声</title>
+<meta name="description" content="撞声：同一部作品里，不同角色的声音听起来像同一个人。voicecast 把整组角色放在一起挑声音，拆开撞声。">
+<meta property="og:title" content="AI 配音最大的问题不是不像人，是撞声">
+<meta property="og:description" content="撞声：同一部作品里，不同角色的声音听起来像同一个人。voicecast 把整组角色放在一起挑声音，拆开撞声。">
+<meta property="og:type" content="website">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -38,10 +42,16 @@ a { color: var(--accent); }
 .note { font-size: .85rem; color: var(--muted); }
 
 /* hero */
-header.hero { display: grid; gap: 16px; padding-block: 56px 40px; }
+header.hero { display: grid; gap: 16px; padding-block: 56px 40px; width: fit-content; max-width: 100%; }
+/* 卡片和导语与标题同宽：不参与撑宽，只填满标题定下的宽度 */
+.hero .define, .hero .lede { width: 0; min-width: 100%; max-width: none; box-sizing: border-box; }
 .hero h1 { font-size: clamp(2rem, 5.5vw, 3.3rem); font-weight: 900; letter-spacing: .02em; }
 .hero h1 small { display: block; font-family: var(--mono); font-size: .9rem; font-weight: 400; color: var(--muted); letter-spacing: .08em; margin-bottom: 8px; }
 .hero .lede { font-size: 1.1rem; }
+.define { display: grid; gap: 8px; padding: 18px 20px; background: var(--warn-soft); border-left: 4px solid var(--warn); border-radius: 0 10px 10px 0; }
+.define .term { font-family: var(--display); font-size: 1.5rem; font-weight: 900; color: var(--warn); }
+.define .term small { font-family: var(--body); font-size: .85rem; font-weight: 400; color: var(--muted); margin-left: 10px; }
+.define p { max-width: none; }
 
 /* tabs + toggles */
 .tabs { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -59,9 +69,19 @@ header.hero { display: grid; gap: 16px; padding-block: 56px 40px; }
 .net svg.edges text { font-family: var(--mono); font-size: 3.6px; }
 .node { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 2px; width: 26%;
   background: none; border: 0; padding: 0; cursor: pointer; color: var(--fg); font: inherit; }
-.node .ring { border-radius: 50%; padding: 3px; border: 2px solid transparent; display: block; line-height: 0; background: var(--bg); }
-.node.on .ring { border-color: var(--accent); }
-.node.b.on .ring { border-color: var(--warn); }
+/* 头像：悬停时淡色光圈 + 轻微放大；播放中为半透明圆环 + 呼吸光晕。--hl 为本图主色（整组挑 = 绿，各自挑 = 橙红） */
+.node { --hl: var(--accent); }
+.node.b { --hl: var(--warn); }
+.node .ring { border-radius: 50%; padding: 3px; border: 2px solid transparent; display: block; line-height: 0; background: var(--bg);
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+.node:hover .ring { transform: scale(1.06); border-color: color-mix(in srgb, var(--hl) 35%, transparent);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--hl) 10%, transparent); }
+.node.on .ring { border-color: color-mix(in srgb, var(--hl) 55%, transparent);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--hl) 14%, transparent); animation: ringPulse 1.6s ease-in-out infinite; }
+.node:focus-visible { outline: none; }
+.node:focus-visible .ring { outline: 2px solid color-mix(in srgb, var(--hl) 60%, transparent); outline-offset: 2px; }
+@keyframes ringPulse { 50% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--hl) 6%, transparent); } }
+@media (prefers-reduced-motion: reduce) { .node .ring { transition: none; } .node.on .ring { animation: none; } }
 .node b { font-size: .82rem; line-height: 1.2; text-align: center; }
 .node small { font-size: .7rem; color: var(--muted); line-height: 1.2; text-align: center; }
 .node .chg { font-size: .65rem; color: var(--accent); }
@@ -169,8 +189,8 @@ button.play svg { width: 14px; height: 14px; fill: currentColor; }
 button.wide { font: inherit; font-size: .88rem; display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px; border-radius: 999px; border: 1.5px solid var(--accent); background: transparent; color: var(--accent); cursor: pointer; }
 button.wide svg { width: 12px; height: 12px; fill: currentColor; }
 .x button.wide, button.wide.x { border-color: var(--warn); color: var(--warn); }
-button.on { background: var(--accent) !important; color: var(--bg) !important; }
-.x button.on, button.wide.x.on { background: var(--warn) !important; }
+button.on:not(.node) { background: var(--accent) !important; color: var(--bg) !important; }
+.x button.on:not(.node), button.wide.x.on { background: var(--warn) !important; }
 button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 footer { border-top: 1px solid var(--line); padding-block: 28px 0; margin-top: 48px; font-size: .85rem; color: var(--muted); }
@@ -190,27 +210,32 @@ footer { border-top: 1px solid var(--line); padding-block: 28px 0; margin-top: 4
 
 <div class="wrap">
 <header class="hero">
-  <h1><small>voicecast · 群像声音选角</small>一部剧里的每个角色，声音都要分得清</h1>
-  <p class="lede">AI 短剧、漫剧、有声书里一次要配六个、十个角色。每个角色单独生成一个合适的声音不难，难的是放在一起时，观众仍然听得出谁是谁。voicecast 把整组角色放在一起挑声音。</p>
+  <h1><small>voicecast · 群像声音选角</small>AI 配音最大的问题不是不像人，是撞声</h1>
+  <div class="define">
+    <div class="term">撞声</div>
+    <p>就像撞衫，同一部作品里，不同角色的声音单独听都匹配，但听起来都像同一个人。</p>
+    <p class="muted">每个角色单独生成一个合适的声音不难；一次配六个、十个角色时，观众就分不清谁在说话。</p>
+  </div>
+  <p class="lede">AI 短剧、漫剧、有声书一次要配很多角色。voicecast 不再一个一个挑声音，而是把整组角色放在一起挑，把撞声的角色拆开。</p>
 </header>
 
 <section id="ensemble">
-  <div class="eyebrow">核心问题</div>
+  <div class="eyebrow">核心问题：撞声</div>
   <h2>各自挑声音，放在一起就撞了</h2>
-  <p class="muted">每个角色各自挑一个合适的声音，没人管它们彼此像不像。</p>
+  <p class="muted">每个角色各自挑一个合适的声音，无法考虑到彼此像不像。</p>
   <p class="muted">以一部校园剧的六个角色为例。左右两张图里，每个头像是一个角色；两个角色之间的连线越粗越红，两个声音就越像，越容易被听成同一个人。点头像可以听声音。</p>
   <div class="pair2">
     <figure class="netcol"><figcaption><b class="xb">各自挑</b><span id="capb"></span></figcaption><div class="net" id="netb"></div></figure>
-    <figure class="netcol"><figcaption><b class="ob">整组一起挑</b><span id="capa"></span></figcaption><div class="net" id="neta"></div></figure>
+    <figure class="netcol"><figcaption><b class="ob">整组挑</b><span id="capa"></span></figcaption><div class="net" id="neta"></div></figure>
   </div>
-  <div class="legend"><span><i></i>很像（相似度 0.65 以上）</span><span><i class="m"></i>有点像，线越粗越像</span><span>没有连线 = 差别明显</span><span>相似度在 0 到 1 之间，越接近 1 越像同一个人</span></div>
-  <h3>听一对：最像的两个角色</h3>
+  <div class="legend"><span><i></i>撞声（相似度 0.65 以上）</span><span><i class="m"></i>有点像，线越粗越像</span><span>没有连线 = 差别明显</span><span>相似度在 0 到 1 之间，越接近 1 越像同一个人</span></div>
+  <h3>听一对：撞得最厉害的两个角色</h3>
   <div class="pairdemo" id="pairdemo"></div>
 </section>
 
 <section id="method">
   <div class="eyebrow">方法</div>
-  <h2>整组选角是怎么进行的</h2>
+  <h2>整组选角：怎样避免撞声</h2>
   <p class="muted">以校园剧的六个角色为例。</p>
   <ol class="axis" id="axis"></ol>
 </section>
@@ -226,7 +251,7 @@ footer { border-top: 1px solid var(--line); padding-block: 28px 0; margin-top: 4
 
 <section id="cast">
   <div class="eyebrow">最终效果</div>
-  <h2>四组阵容的自我介绍</h2>
+  <h2>四组不撞声的阵容</h2>
   <p class="muted">声音锁定后，每个角色说一句自我介绍。全部由程序自动选角。</p>
   <div class="tabs" role="tablist" id="tabs"></div>
   <div class="boardhead"><p id="lsub" class="muted"></p><button class="wide" id="epi" type="button"></button></div>
@@ -380,7 +405,7 @@ function drawNet(net, E, mode) {
     net.appendChild(b);
   });
   const ca = E.characters[mi], cb = E.characters[mj];
-  return `最像的一对：${ca.name}和${cb.name}，相似度 ${ms.toFixed(2)}；很像的组合 ${countStrong(m)} 对`;
+  return `最像的一对：${ca.name}和${cb.name}，相似度 ${ms.toFixed(2)}`;
 }
 
 function renderEnsemble(D) {
